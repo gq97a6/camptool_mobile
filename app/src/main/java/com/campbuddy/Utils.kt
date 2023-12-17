@@ -27,6 +27,7 @@ import android.widget.Toast
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.hsv
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -239,3 +240,6 @@ fun createNotification(
         notify(id, notification.build())
     }
 }
+
+val M: Modifier
+    get() = Modifier

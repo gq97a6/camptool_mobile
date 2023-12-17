@@ -81,9 +81,9 @@ fun BoldStartText(modifier: Modifier = Modifier, a: String, b: String, fontSize:
             text = a,
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
-            color = ColorScheme.primary
+            color = MaterialTheme.colorScheme.primary
         )
-        Text(text = b, fontSize = fontSize, color = ColorScheme.secondary)
+        Text(text = b, fontSize = fontSize, color = MaterialTheme.colorScheme.secondary)
     }
 }
 
@@ -104,7 +104,7 @@ fun LabeledSwitch(
         Text(
             "OFF",
             fontSize = 12.sp,
-            color = ColorScheme.secondary,
+            color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.padding(start = 8.dp)
         )
         Switch(
@@ -117,7 +117,7 @@ fun LabeledSwitch(
                 .wrapContentSize()
                 .padding(0.dp)
         )
-        Text("ON", fontSize = 12.sp, color = ColorScheme.secondary)
+        Text("ON", fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary)
     }
 }
 
@@ -177,7 +177,7 @@ fun RadioGroup(
     onClick: ((Int) -> Unit)
 ) {
     Column(modifier = modifier) {
-        Text(text = label, fontSize = 15.sp, color = ColorScheme.primary)
+        Text(text = label, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
         options.forEachIndexed { index, item ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -195,7 +195,7 @@ fun RadioGroup(
                 val annotatedText = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
-                            color = if (index == selected) ColorScheme.secondary else ColorScheme.tertiary,
+                            color = if (index == selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.tertiary,
                             fontSize = 15.sp
                         )
                     )
@@ -224,7 +224,7 @@ fun HorizontalRadioGroup(
         modifier = modifier.padding(vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, fontSize = 15.sp, color = ColorScheme.primary)
+        Text(text = label, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
         options.forEachIndexed { index, item ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -242,7 +242,7 @@ fun HorizontalRadioGroup(
                 val annotatedText = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
-                            color = if (index == selected) ColorScheme.primary else ColorScheme.secondary,
+                            color = if (index == selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                             fontSize = 15.sp
                         )
                     )
@@ -555,7 +555,7 @@ fun BasicButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = MaterialTheme.shapes.small,
-    border: BorderStroke = BorderStroke(2.dp, ColorScheme.secondary),
+    border: BorderStroke = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
     contentPadding: PaddingValues = PaddingValues(13.dp),
     contentAlignment: Alignment = Alignment.Center,
     content: @Composable () -> Unit
