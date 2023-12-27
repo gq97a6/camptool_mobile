@@ -101,6 +101,6 @@ object Mockup {
         "Krystian Chmiel",
         "Monika Piwowarska",
         "Stanisław Lichota",
-        "Iwona Ostaszewska"
+        "Last Name"
     )
 }
