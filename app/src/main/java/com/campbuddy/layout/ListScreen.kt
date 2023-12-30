@@ -14,6 +14,7 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -148,6 +149,8 @@ fun ListScreen(navController: NavController?) {
                     }
                 }
             }
+
+            item { Spacer(modifier = M.height(15.dp)) }
         }
     }
 }
