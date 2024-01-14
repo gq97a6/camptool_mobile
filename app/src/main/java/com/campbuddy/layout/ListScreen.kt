@@ -11,8 +11,8 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -21,9 +21,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -32,14 +32,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -91,7 +92,7 @@ fun ListScreen(navController: NavController?) {
     //val scope = rememberCoroutineScope()
     var states = remember { mutableStateListOf(*Array(100) { true }) }
 
-    ListScreenBottomDrawer(size = 100.dp) {
+    ListScreenBottomDrawer(size = 100.dp, states) {
         LazyColumn(
             M
                 .padding(horizontal = 15.dp)
@@ -157,7 +158,9 @@ fun ListScreen(navController: NavController?) {
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "checkbox",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = M.fillMaxSize().padding(10.dp),
+                                modifier = M
+                                    .fillMaxSize()
+                                    .padding(10.dp),
                             )
                         }
                     }
@@ -171,7 +174,11 @@ fun ListScreen(navController: NavController?) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ListScreenBottomDrawer(size: Dp = 100.dp, content: @Composable () -> Unit) {
+fun ListScreenBottomDrawer(
+    size: Dp = 100.dp,
+    states: SnapshotStateList<Boolean>,
+    content: @Composable () -> Unit
+) {
     val sizePx = size.toPx()
 
     val state = remember {
@@ -204,10 +211,71 @@ fun ListScreenBottomDrawer(size: Dp = 100.dp, content: @Composable () -> Unit) {
             modifier = Modifier
                 .height(size + state.offset.toDp())
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant,
+                    MaterialTheme.shapes.large.copy(
+                        bottomEnd = CornerSize(0),
+                        bottomStart = CornerSize(0)
+                    )
+                )
                 .anchoredDraggable(state, Orientation.Vertical, reverseDirection = true)
+                .padding(15.dp)
         ) {
-            //Text(text = state.currentValue.ordinal.toString())
+            if (!state.isAnimationRunning) when (state.currentValue.ordinal) {
+                0 -> ListScreenBottomDrawerContentSmall(states.size, states.count { it })
+                1 -> ListScreenBottomDrawerContentBig(states)
+            }
+        }
+    }
+}
+
+@Composable
+fun ListScreenBottomDrawerContentSmall(all: Int, checked: Int) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = "$checked / $all",
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = TextStyle(
+                fontSize = 44.sp,
+                shadow = Shadow(
+                    color = MaterialTheme.colorScheme.scrim, //TODO: CHECK COLOR
+                    offset = Offset(1.0f, 2.0f),
+                    blurRadius = 1f
+                )
+            ),
+            textAlign = TextAlign.Start,
+            fontSize = 35.sp,
+            softWrap = true,
+            lineHeight = 34.sp,
+            modifier = M.fillMaxWidth()
+        )
+
+    }
+}
+
+@Composable
+fun ListScreenBottomDrawerContentBig(states: SnapshotStateList<Boolean>) {
+    Column(Modifier.fillMaxSize()) {
+        Mockup.names.forEachIndexed { i, name ->
+            if (states[i]) {
+                Text(
+                    text = "$i. $name",
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    style = TextStyle(
+                        fontSize = 44.sp,
+                        shadow = Shadow(
+                            color = MaterialTheme.colorScheme.scrim, //TODO: CHECK COLOR
+                            offset = Offset(1.0f, 2.0f),
+                            blurRadius = 1f
+                        )
+                    ),
+                    textAlign = TextAlign.Start,
+                    fontSize = 25.sp,
+                    softWrap = true,
+                    lineHeight = 34.sp,
+                    modifier = M.fillMaxWidth()
+                )
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ object Mockup {
         "Marta Kozłowska",
         "Krzysztof Jankowski",
         "Magdalena Mazur",
-        "Rafał Wojciechowska",
+        "Rafał Wojciechowski",
         "Ewa Czarnecka",
         "Damian Grabowski",
         "Barbara Kwiatkowska",
