@@ -5,9 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -38,6 +36,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.campbuddy.compose.Theme
+import com.campbuddy.layout.CardScreen
 import com.campbuddy.layout.ListScreen
 import kotlinx.coroutines.launch
 
@@ -79,9 +78,9 @@ fun NavigationDrawer(navController: NavHostController, content: @Composable () -
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(content = content, drawerState = drawerState, drawerContent = {
-        ModalDrawerSheet(M.width(100.dp)) {
+        ModalDrawerSheet(Modifier.width(100.dp)) {
             repeat(locations.size) {
-                IconButton(modifier = M
+                IconButton(modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f), onClick = {
                     scope.launch { drawerState.close() }
@@ -89,7 +88,7 @@ fun NavigationDrawer(navController: NavHostController, content: @Composable () -
                     navController.clearBackStack(locations[it])
                 }) {
                     Icon(
-                        modifier = M.fillMaxSize(.5f),
+                        modifier = Modifier.fillMaxSize(.5f),
                         imageVector = icons[it],
                         contentDescription = "Favorite",
                         tint = MaterialTheme.colorScheme.primary
@@ -116,7 +115,7 @@ fun AppNavigation() {
             composable("settings") { Settings(navController) }
             composable("day") { DayPlan(navController) }
             composable("planner") { Planner(navController) }
-            composable("card") { Card(navController) }
+            composable("card") { CardScreen(navController) }
             composable("list") { ListScreen(navController) }
         }
     }
@@ -145,9 +144,4 @@ fun DayPlan(navController: NavController) {
 @Composable
 fun Planner(navController: NavController) {
     Text(text = "planner", fontSize = 50.sp, color = MaterialTheme.colorScheme.onBackground)
-}
-
-@Composable
-fun Card(navController: NavController) {
-    Text(text = "card", fontSize = 50.sp, color = MaterialTheme.colorScheme.onBackground)
 }
