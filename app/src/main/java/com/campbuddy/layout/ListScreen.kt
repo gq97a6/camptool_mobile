@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.campbuddy.M
 import com.campbuddy.compose.Theme
 import com.campbuddy.`object`.Mockup
 import com.campbuddy.performClick
@@ -65,7 +64,7 @@ enum class DragAnchors(val fraction: Float) {
 fun PreviewDark() {
     Theme(true) {
         Box(
-            M
+            Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
@@ -78,7 +77,7 @@ fun PreviewDark() {
 fun PreviewLight() {
     Theme(false) {
         Box(
-            M
+            Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
@@ -92,16 +91,16 @@ fun ListScreen(navController: NavController?) {
     //val scope = rememberCoroutineScope()
     var states = remember { mutableStateListOf(*Array(100) { true }) }
 
-    ListScreenBottomDrawer(size = 100.dp, states) {
+    ListScreenBottomDrawer(size = 100.dp, 15.dp, states) {
         LazyColumn(
-            M
+            Modifier
                 .padding(horizontal = 15.dp)
                 .fillMaxHeight()
                 .padding(bottom = 100.dp)
         ) {
             itemsIndexed(items = Mockup.names) { i, name ->
                 Row(
-                    modifier = M
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(100.dp)
                         .padding(top = 15.dp),
@@ -109,7 +108,7 @@ fun ListScreen(navController: NavController?) {
                     //horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(
-                        modifier = M
+                        modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
                             .shadow(5.dp, shape = MaterialTheme.shapes.small)
@@ -134,7 +133,7 @@ fun ListScreen(navController: NavController?) {
                             fontSize = 24.sp,
                             softWrap = true,
                             lineHeight = 34.sp,
-                            modifier = M.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
 
@@ -158,7 +157,7 @@ fun ListScreen(navController: NavController?) {
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "checkbox",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = M
+                                modifier = Modifier
                                     .fillMaxSize()
                                     .padding(10.dp),
                             )
@@ -167,7 +166,7 @@ fun ListScreen(navController: NavController?) {
                 }
             }
 
-            item { Spacer(modifier = M.height(15.dp)) }
+            item { Spacer(modifier = Modifier.height(15.dp)) }
         }
     }
 }
@@ -176,6 +175,7 @@ fun ListScreen(navController: NavController?) {
 @Composable
 fun ListScreenBottomDrawer(
     size: Dp = 100.dp,
+    padding: Dp = 15.dp,
     states: SnapshotStateList<Boolean>,
     content: @Composable () -> Unit
 ) {
@@ -191,7 +191,7 @@ fun ListScreenBottomDrawer(
     }
 
     Box(
-        modifier = M
+        modifier = Modifier
             .onSizeChanged { layoutSize ->
                 val end = layoutSize.height - sizePx
                 state.updateAnchors(DraggableAnchors {
@@ -219,11 +219,16 @@ fun ListScreenBottomDrawer(
                     )
                 )
                 .anchoredDraggable(state, Orientation.Vertical, reverseDirection = true)
-                .padding(15.dp)
+                .padding(padding)
         ) {
-            if (!state.isAnimationRunning) when (state.currentValue.ordinal) {
-                0 -> ListScreenBottomDrawerContentSmall(states.size, states.count { it })
-                1 -> ListScreenBottomDrawerContentBig(states)
+            Column {
+                Box(modifier = Modifier.fillMaxWidth().height(size - padding - padding)) {
+                    ListScreenBottomDrawerContentSmall(states.size, states.count { it })
+                }
+
+                Box(modifier = Modifier.fillMaxSize()) {
+                    ListScreenBottomDrawerContentBig(states)
+                }
             }
         }
     }
@@ -247,7 +252,7 @@ fun ListScreenBottomDrawerContentSmall(all: Int, checked: Int) {
             fontSize = 35.sp,
             softWrap = true,
             lineHeight = 34.sp,
-            modifier = M.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
     }
@@ -273,7 +278,7 @@ fun ListScreenBottomDrawerContentBig(states: SnapshotStateList<Boolean>) {
                     fontSize = 25.sp,
                     softWrap = true,
                     lineHeight = 34.sp,
-                    modifier = M.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
