@@ -2,6 +2,11 @@
 
 package com.campbuddy.layout
 
+import android.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
+import android.widget.FrameLayout
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -20,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -35,8 +41,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
@@ -45,7 +53,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import com.campbuddy.compose.BottomDrawer
 import com.campbuddy.compose.Theme
 import com.campbuddy.`object`.Mockup
 import com.campbuddy.performClick
@@ -91,155 +101,105 @@ fun ListScreen(navController: NavController?) {
     //val scope = rememberCoroutineScope()
     var states = remember { mutableStateListOf(*Array(100) { true }) }
 
-    ListScreenBottomDrawer(size = 100.dp, 15.dp, states) {
-        LazyColumn(
-            Modifier
-                .padding(horizontal = 15.dp)
-                .fillMaxHeight()
-                .padding(bottom = 100.dp)
-        ) {
-            itemsIndexed(items = Mockup.names) { i, name ->
-                Row(
+    LazyColumn(
+        Modifier
+            .padding(horizontal = 15.dp)
+            .fillMaxHeight()
+    ) {
+        itemsIndexed(items = Mockup.names) { i, name ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .padding(top = 15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                //horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .padding(top = 15.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    //horizontalArrangement = Arrangement.SpaceBetween
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .border(
+                            2.dp,
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.shapes.small
+                        )
+                        .padding(start = 12.dp),
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .shadow(5.dp, shape = MaterialTheme.shapes.small)
-                            .background(
-                                MaterialTheme.colorScheme.secondaryContainer,
-                                MaterialTheme.shapes.small
+                    Text(
+                        text = name.replace(" ", "\n"),
+                        color = MaterialTheme.colorScheme.primary,
+                        style = TextStyle(
+                            fontSize = 44.sp,
+                            shadow = Shadow(
+                                color = MaterialTheme.colorScheme.scrim, //TODO: CHECK COLOR
+                                offset = Offset(1.0f, 2.0f),
+                                blurRadius = 1f
                             )
-                            .padding(start = 12.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Text(
-                            text = name.replace(" ", "\n"),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            style = TextStyle(
-                                fontSize = 44.sp,
-                                shadow = Shadow(
-                                    color = MaterialTheme.colorScheme.scrim, //TODO: CHECK COLOR
-                                    offset = Offset(1.0f, 2.0f),
-                                    blurRadius = 1f
-                                )
-                            ),
-                            fontSize = 24.sp,
-                            softWrap = true,
-                            lineHeight = 34.sp,
-                            modifier = Modifier.fillMaxWidth()
+                        ),
+                        fontSize = 24.sp,
+                        softWrap = true,
+                        lineHeight = 34.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Box(
+                    Modifier
+                        .padding(start = 15.dp)
+                        .fillMaxHeight()
+                        .aspectRatio(1f)
+                        .border(
+                            2.dp,
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.shapes.small
+                        )
+                        .clickable {
+                            states[i] = !states[i]
+                            navController?.context?.apply { performClick(this) }
+                        }
+                ) {
+                    if (states[i]) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "checkbox",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp),
                         )
                     }
-
-                    Box(
-                        Modifier
-                            .padding(start = 15.dp)
-                            .fillMaxHeight()
-                            .aspectRatio(1f)
-                            .border(
-                                2.dp,
-                                MaterialTheme.colorScheme.outline,
-                                MaterialTheme.shapes.small
-                            )
-                            .clickable {
-                                states[i] = !states[i]
-                                navController?.context?.apply { performClick(this) }
-                            }
-                    ) {
-                        if (states[i]) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = "checkbox",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(10.dp),
-                            )
-                        }
-                    }
                 }
             }
-
-            item { Spacer(modifier = Modifier.height(15.dp)) }
         }
-    }
-}
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ListScreenBottomDrawer(
-    size: Dp = 100.dp,
-    padding: Dp = 15.dp,
-    states: SnapshotStateList<Boolean>,
-    content: @Composable () -> Unit
-) {
-    val sizePx = size.toPx()
-
-    val state = remember {
-        AnchoredDraggableState(
-            initialValue = DragAnchors.Start,
-            positionalThreshold = { it * 0.5f },
-            velocityThreshold = { 0f },
-            animationSpec = tween(),
-        )
+        item { Spacer(modifier = Modifier.height(115.dp)) }
     }
 
-    Box(
-        modifier = Modifier
-            .onSizeChanged { layoutSize ->
-                val end = layoutSize.height - sizePx
-                state.updateAnchors(DraggableAnchors {
-                    DragAnchors
-                        .values()
-                        .forEach { anchor ->
-                            anchor at end * anchor.fraction
-                        }
-                })
+    BottomDrawer(100.dp, 2.dp) {
+        Column(Modifier.fillMaxSize().padding(15.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                ListScreenDrawerContentSmall(states.size, states.count { it })
             }
-            .fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        content()
 
-        Box(
-            modifier = Modifier
-                .height(size + state.offset.toDp())
-                .fillMaxWidth()
-                .background(
-                    MaterialTheme.colorScheme.surfaceVariant,
-                    MaterialTheme.shapes.large.copy(
-                        bottomEnd = CornerSize(0),
-                        bottomStart = CornerSize(0)
-                    )
-                )
-                .anchoredDraggable(state, Orientation.Vertical, reverseDirection = true)
-                .padding(padding)
-        ) {
-            Column {
-                Box(modifier = Modifier.fillMaxWidth().height(size - padding - padding)) {
-                    ListScreenBottomDrawerContentSmall(states.size, states.count { it })
-                }
-
-                Box(modifier = Modifier.fillMaxSize()) {
-                    ListScreenBottomDrawerContentBig(states)
-                }
+            Box(modifier = Modifier.fillMaxSize()) {
+                //ListScreenDrawerContentBig(states)
             }
         }
     }
 }
 
 @Composable
-fun ListScreenBottomDrawerContentSmall(all: Int, checked: Int) {
+fun ListScreenDrawerContentSmall(all: Int, checked: Int) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
             text = "$checked / $all",
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = MaterialTheme.colorScheme.primary,
             style = TextStyle(
                 fontSize = 44.sp,
                 shadow = Shadow(
@@ -259,13 +219,13 @@ fun ListScreenBottomDrawerContentSmall(all: Int, checked: Int) {
 }
 
 @Composable
-fun ListScreenBottomDrawerContentBig(states: SnapshotStateList<Boolean>) {
+fun ListScreenDrawerContentBig(states: SnapshotStateList<Boolean>) {
     Column(Modifier.fillMaxSize()) {
         Mockup.names.forEachIndexed { i, name ->
             if (states[i]) {
                 Text(
                     text = "$i. $name",
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = MaterialTheme.colorScheme.primary,
                     style = TextStyle(
                         fontSize = 44.sp,
                         shadow = Shadow(
