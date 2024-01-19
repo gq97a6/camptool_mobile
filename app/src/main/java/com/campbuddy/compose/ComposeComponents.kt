@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,12 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.campbuddy.layout.DragAnchors
-import com.campbuddy.layout.ListScreen
 import com.campbuddy.toDp
 import com.campbuddy.toPx
 
@@ -41,59 +42,44 @@ fun PreviewDark() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
-        BottomDrawer()
+        BottomDrawer {
+            Box(modifier = Modifier.fillMaxWidth().height(500.dp).background(Color.Black))
+        }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomDrawer(
-    height: Dp = 100.dp,
-    border: Dp = 2.dp,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    backgroundColor: Color = MaterialTheme.colorScheme.background,
-    alpha: Float = .98f,
-    shape: Shape = MaterialTheme.shapes.large.copy(
-        bottomEnd = CornerSize(0),
-        bottomStart = CornerSize(0)
-    ),
-    content: @Composable (state: AnchoredDraggableState<DragAnchors>) -> Unit = {}
+    anchors: List<Dp> = listOf(400.dp, 0.dp),
+    content: @Composable (state: AnchoredDraggableState<*>) -> Unit = {}
 ) {
-    val sizePx = height.toPx()
-
     val state = remember {
         AnchoredDraggableState(
-            initialValue = DragAnchors.Start,
+            initialValue = anchors.first(),
             positionalThreshold = { it * 0.5f },
             velocityThreshold = { 0f },
             animationSpec = tween(),
         )
     }
 
+    val anchorsPx = anchors.map { it.toPx() }
+
+    state.updateAnchors(DraggableAnchors {
+        anchors.forEachIndexed { i, anchor ->
+            anchor at anchorsPx[i]
+        }
+    })
+
     Box(
-        modifier = Modifier
-            .onSizeChanged { layoutSize ->
-                val end = layoutSize.height - sizePx
-                state.updateAnchors(DraggableAnchors {
-                    DragAnchors
-                        .values()
-                        .forEach { anchor ->
-                            anchor at end * anchor.fraction
-                        }
-                })
-            }
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
     ) {
         Box(
             modifier = Modifier
-                .height(height + state.offset.toDp())
+                .offset(y = state.offset.toDp())
                 .fillMaxWidth()
-                .offset(y = border)
-                .border(border, borderColor, shape)
-                .alpha(alpha)
-                .background(backgroundColor, shape)
-                .anchoredDraggable(state, Orientation.Vertical, reverseDirection = true),
+                .anchoredDraggable(state, Orientation.Vertical, reverseDirection = false),
         ) {
             content(state)
         }
