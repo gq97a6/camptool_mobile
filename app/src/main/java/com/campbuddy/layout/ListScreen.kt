@@ -194,11 +194,12 @@ fun ListScreen(navController: NavController?) {
                         bottomStart = CornerSize(0)
                     )
                 )
+                .padding(horizontal = 15.dp)
         ) {
             Box(
                 Modifier
-                    .height(100.dp)
-                    .padding(start = 15.dp),
+                    .height(90.dp)
+                    .padding(top = 10.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
@@ -219,9 +220,7 @@ fun ListScreen(navController: NavController?) {
                 )
             }
 
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 15.dp)) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 listOf(
                     "Pokaż jedynie obecnych",
                     "Pokaż jedynie nieobecnych",
