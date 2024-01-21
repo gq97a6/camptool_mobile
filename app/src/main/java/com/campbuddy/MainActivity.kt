@@ -41,6 +41,8 @@ import androidx.navigation.compose.rememberNavController
 import com.campbuddy.compose.Theme
 import com.campbuddy.layout.CardScreen
 import com.campbuddy.layout.ListScreen
+import com.campbuddy.layout.LoginScreen
+import com.campbuddy.layout.PlanScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -118,7 +120,7 @@ fun AppNavigation() {
             composable("home") { HomeScreen(navController) }
             composable("login") { LoginScreen(navController) }
             composable("settings") { Settings(navController) }
-            composable("day") { DayPlan(navController) }
+            composable("day") { PlanScreen(navController) }
             composable("planner") { Planner(navController) }
             composable("card") { CardScreen(navController) }
             composable("list") { ListScreen(navController) }
@@ -132,18 +134,8 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
-fun LoginScreen(navController: NavController) {
-    Text(text = "login", fontSize = 50.sp, color = MaterialTheme.colorScheme.onBackground)
-}
-
-@Composable
 fun Settings(navController: NavController) {
     Text(text = "settings", fontSize = 50.sp, color = MaterialTheme.colorScheme.onBackground)
-}
-
-@Composable
-fun DayPlan(navController: NavController) {
-    Text(text = "day_plan", fontSize = 50.sp, color = MaterialTheme.colorScheme.onBackground)
 }
 
 @Composable
