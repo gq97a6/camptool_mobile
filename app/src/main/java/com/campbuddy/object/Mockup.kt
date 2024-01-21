@@ -1,5 +1,7 @@
 package com.campbuddy.`object`
 
+import com.campbuddy.classes.Event
+
 object Mockup {
     val names = listOf(
         "Jakub Nowak",
@@ -103,4 +105,19 @@ object Mockup {
         "Stanisław Lichota",
         "Last Name"
     )
+
+    val events = listOf(
+        Event("7:30", "Pobudka"),
+        Event("8:00", "Zbiórka na placu głównym"),
+        Event("8:15", "Śniadanie"),
+        Event("9:45", "Przerwa"),
+        Event("10:15", "Zbiórka na placu głównym"),
+        Event("11:00", "Wyjazd", "A"),
+        Event("11:00", "Zajęcia", "B"),
+        Event("12:30", "Przerwa", "A"),
+        Event("12:30", "Zbióka", "B"),
+        Event("13:30", "Zbiórka na placu głównym"),
+        Event("13:45", "Obiad"),
+        Event("14:15", "Czas wolny"),
+    ).groupBy { it.hour }
 }
