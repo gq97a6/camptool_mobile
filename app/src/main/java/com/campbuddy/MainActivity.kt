@@ -1,6 +1,8 @@
 package com.campbuddy
 
 import android.os.Bundle
+import android.util.Log
+import android.webkit.WebStorage.Origin
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
@@ -25,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -38,12 +39,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.campbuddy.api.Login
+import com.campbuddy.api.Retrofit.rf
 import com.campbuddy.compose.Theme
 import com.campbuddy.layout.CardScreen
 import com.campbuddy.layout.ListScreen
 import com.campbuddy.layout.LoginScreen
 import com.campbuddy.layout.PlanScreen
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.net.Authenticator
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +58,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Theme {
-                Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)) {
                     AppNavigation()
                 }
             }
@@ -113,7 +122,7 @@ fun AppNavigation() {
     NavigationDrawer(navController) {
         NavHost(
             navController = navController,
-            startDestination = "list",
+            startDestination = "login",
             exitTransition = { ExitTransition.None },
             enterTransition = { EnterTransition.None }
         ) {
@@ -128,6 +137,7 @@ fun AppNavigation() {
     }
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     Text(text = "home", fontSize = 50.sp, color = MaterialTheme.colorScheme.onBackground)
