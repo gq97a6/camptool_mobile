@@ -48,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.campbuddy.compose.BottomDrawer
 import com.campbuddy.compose.Theme
 import com.campbuddy.`object`.Mockup
@@ -62,7 +63,7 @@ fun PreviewDark() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
-        ListScreen(navController = null)
+        ListScreen(rememberNavController())
     }
 }
 
@@ -75,26 +76,17 @@ fun PreviewLight() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
-        ListScreen(navController = null)
+        ListScreen(rememberNavController())
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ListScreen(navController: NavController?) {
+fun ListScreen(navController: NavController) {
 
     //val scope = rememberCoroutineScope()
     var states = remember { mutableStateListOf(*Array(100) { true }) }
     var filter by remember { mutableStateOf(2) }
-
-    val drawerState = remember {
-        AnchoredDraggableState(
-            initialValue = 0,
-            positionalThreshold = { it * 0.5f },
-            velocityThreshold = { 0f },
-            animationSpec = tween(),
-        )
-    }
 
     LazyColumn(
         Modifier
@@ -119,7 +111,7 @@ fun ListScreen(navController: NavController?) {
                     )
                     .clickable {
                         states[i] = !states[i]
-                        navController?.context?.apply { performClick(this) }
+                        navController.context.apply { performClick(this) }
                     }
             ) {
                 Text(
@@ -203,7 +195,7 @@ fun ListScreen(navController: NavController?) {
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    text = "100 / 100",
+                    text = "${states.filter { it }.size} / ${states.size}",
                     color = MaterialTheme.colorScheme.primary,
                     style = TextStyle(
                         fontSize = 44.sp,

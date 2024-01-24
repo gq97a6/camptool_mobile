@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.campbuddy.classes.Event
 import com.campbuddy.compose.Theme
 import com.campbuddy.`object`.Mockup.events
@@ -38,12 +39,12 @@ fun PlanPreview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
-        PlanScreen(navController = null)
+        PlanScreen(rememberNavController())
     }
 }
 
 @Composable
-fun PlanScreen(navController: NavController?) = Column(
+fun PlanScreen(navController: NavController) = Column(
     Modifier
         .padding(horizontal = 20.dp)
         .padding(bottom = 40.dp)

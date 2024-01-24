@@ -20,13 +20,12 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.campbuddy.R
+import androidx.navigation.compose.rememberNavController
 import com.campbuddy.compose.FrameBox
 import com.campbuddy.compose.Theme
 
@@ -39,12 +38,12 @@ fun CardPreview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
-        CardScreen(navController = null)
+        CardScreen(rememberNavController())
     }
 }
 
 @Composable
-fun CardScreen(navController: NavController?) = Column(
+fun CardScreen(navController: NavController) = Column(
     Modifier
         .padding(horizontal = 20.dp)
         .padding(bottom = 40.dp)
