@@ -8,6 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,28 +35,36 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.compose.rememberNavController
+import com.campbuddy.api.Endpoints
+import com.campbuddy.api.Retrofit
+import com.campbuddy.classes.Kid
 import com.campbuddy.compose.BottomDrawer
 import com.campbuddy.compose.Theme
-import com.campbuddy.`object`.Mockup
+import com.campbuddy.createToast
+import com.campbuddy.`object`.G
 import com.campbuddy.performClick
+import com.campbuddy.toDp
+import com.campbuddy.toPx
 
 @Composable
 @Preview
@@ -68,7 +80,6 @@ fun PreviewDark() {
 }
 
 @Composable
-//@Preview
 fun PreviewLight() {
     Theme(false) {
         Box(
@@ -84,45 +95,79 @@ fun PreviewLight() {
 @Composable
 fun ListScreen(navController: NavController) {
 
-    //val scope = rememberCoroutineScope()
-    var states = remember { mutableStateListOf(*Array(100) { true }) }
+    var kids by remember { mutableStateOf(listOf<Kid>()) }
     var filter by remember { mutableStateOf(2) }
+    var states = remember { List(50) { true }.toMutableStateList() }
+    val anchors = remember { listOf(0.dp, 100.dp) }
+    val anchorsPx = anchors.map { it.toPx() }
+
+    var dragStates = remember {
+        List(50) {
+            AnchoredDraggableState(
+                initialValue = anchors.first(),
+                positionalThreshold = { it * 0.9f },
+                velocityThreshold = { Float.MAX_VALUE },
+                animationSpec = tween(),
+            )
+        }.toMutableStateList()
+    }
+
+    remember {
+        dragStates.forEach {
+            it.updateAnchors(DraggableAnchors {
+                anchors.forEachIndexed { i, anchor ->
+                    anchor at anchorsPx[i]
+                }
+            })
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val api = Retrofit.rf.create(Endpoints::class.java)
+        kids = api.getAllKids().body() ?: listOf()
+    }
 
     LazyColumn(
         Modifier
             .padding(horizontal = 15.dp)
             .fillMaxHeight()
     ) {
-        itemsIndexed(items = Mockup.names) { i, name ->
+        itemsIndexed(items = kids) { i, kid ->
             when (filter) {
                 0 -> if (!states[i]) return@itemsIndexed
                 1 -> if (states[i]) return@itemsIndexed
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .padding(top = 15.dp)
-                    .border(
-                        2.dp,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.shapes.small
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(top = 15.dp)
+                .offset(x = dragStates[i].offset.toDp())
+                .anchoredDraggable(dragStates[i], Orientation.Horizontal, reverseDirection = false)
+                .border(
+                    2.dp,
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.shapes.small
+                )
+                .pointerInput(Unit){
+                    detectTapGestures(
+                        onTap = {
+                            states[i] = !states[i]
+                            navController.context.apply { performClick(this) }
+                        },
+                        onLongPress = {
+                            G.kid = kid
+                            navController.navigate("card")
+                        }
                     )
-                    .clickable {
-                        states[i] = !states[i]
-                        navController.context.apply { performClick(this) }
-                    }
-            ) {
+                }) {
                 Text(
-                    text = name.replace(" ", "\n"),
+                    text = kid.name.replace(" ", "\n"),
                     color = MaterialTheme.colorScheme.primary,
                     style = TextStyle(
-                        fontSize = 22.sp,
-                        shadow = Shadow(
+                        fontSize = 22.sp, shadow = Shadow(
                             color = MaterialTheme.colorScheme.scrim, //TODO: CHECK COLOR
-                            offset = Offset(1.0f, 2.0f),
-                            blurRadius = 1f
+                            offset = Offset(1.0f, 2.0f), blurRadius = 1f
                         )
                     ),
                     softWrap = true,
@@ -142,16 +187,13 @@ fun ListScreen(navController: NavController) {
                             2.dp,
                             MaterialTheme.colorScheme.primary,
                             MaterialTheme.shapes.large.copy(
-                                topEnd = CornerSize(0),
-                                bottomEnd = CornerSize(0)
+                                topEnd = CornerSize(0), bottomEnd = CornerSize(0)
                             )
                         )
                         .then(
                             if (states[i]) Modifier.background(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.shapes.large.copy(
-                                    topEnd = CornerSize(0),
-                                    bottomEnd = CornerSize(0)
+                                MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large.copy(
+                                    topEnd = CornerSize(0), bottomEnd = CornerSize(0)
                                 )
                             ) else Modifier
                         )
@@ -171,19 +213,14 @@ fun ListScreen(navController: NavController) {
                 .height(320.dp)
                 .offset(y = 2.dp)
                 .border(
-                    2.dp,
-                    MaterialTheme.colorScheme.primary,
-                    MaterialTheme.shapes.large.copy(
-                        bottomEnd = CornerSize(0),
-                        bottomStart = CornerSize(0)
+                    2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large.copy(
+                        bottomEnd = CornerSize(0), bottomStart = CornerSize(0)
                     )
                 )
                 .alpha(.98f)
                 .background(
-                    MaterialTheme.colorScheme.background,
-                    MaterialTheme.shapes.large.copy(
-                        bottomEnd = CornerSize(0),
-                        bottomStart = CornerSize(0)
+                    MaterialTheme.colorScheme.background, MaterialTheme.shapes.large.copy(
+                        bottomEnd = CornerSize(0), bottomStart = CornerSize(0)
                     )
                 )
                 .padding(horizontal = 15.dp)
@@ -198,11 +235,9 @@ fun ListScreen(navController: NavController) {
                     text = "${states.filter { it }.size} / ${states.size}",
                     color = MaterialTheme.colorScheme.primary,
                     style = TextStyle(
-                        fontSize = 44.sp,
-                        shadow = Shadow(
+                        fontSize = 44.sp, shadow = Shadow(
                             color = MaterialTheme.colorScheme.scrim, //TODO: CHECK COLOR
-                            offset = Offset(1.0f, 2.0f),
-                            blurRadius = 1f
+                            offset = Offset(1.0f, 2.0f), blurRadius = 1f
                         )
                     ),
                     textAlign = TextAlign.Start,
@@ -214,9 +249,7 @@ fun ListScreen(navController: NavController) {
 
             Column(modifier = Modifier.fillMaxSize()) {
                 listOf(
-                    "Pokaż jedynie obecnych",
-                    "Pokaż jedynie nieobecnych",
-                    "Pokaż wszystkich"
+                    "Pokaż jedynie obecnych", "Pokaż jedynie nieobecnych", "Pokaż wszystkich"
                 ).forEachIndexed { index, s ->
                     FilterChip(
                         selected = filter == index,
@@ -236,8 +269,7 @@ fun ListScreen(navController: NavController) {
                     onClick = {
                         repeat(states.size) { states[it] = false }
                         filter = 2
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                    }, modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Odznacz wszystkich")
                 }

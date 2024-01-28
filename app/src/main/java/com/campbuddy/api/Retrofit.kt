@@ -1,5 +1,6 @@
 package com.campbuddy.api
 
+import com.campbuddy.`object`.Storage.mapper
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -21,9 +22,9 @@ object Retrofit {
         }
     }
 
-    val rf = Retrofit.Builder()
+    val rf: Retrofit = Retrofit.Builder()
         .baseUrl("https://camp.hostunit.net/")
         .addConverterFactory(NullOnEmptyConverterFactory())
-        .addConverterFactory(JacksonConverterFactory.create())
+        .addConverterFactory(JacksonConverterFactory.create(mapper))
         .build()
 }
