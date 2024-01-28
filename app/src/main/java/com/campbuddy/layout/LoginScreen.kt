@@ -30,12 +30,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.campbuddy.R
-import com.campbuddy.api.Login
+import com.campbuddy.api.Endpoints
 import com.campbuddy.api.Retrofit
 import com.campbuddy.compose.Theme
 import com.campbuddy.createToast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -107,7 +105,7 @@ fun LoginScreen(navController: NavController) = Column(
             onClick = {
                 isWorking = true
                 scope.launch {
-                    val api = Retrofit.rf.create(Login::class.java)
+                    val api = Retrofit.rf.create(Endpoints::class.java)
                     val result = api.login(mapOf("username" to login, "password" to pass)).code()
 
                     if (result == 200) navController.navigate("home")

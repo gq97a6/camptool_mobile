@@ -1,5 +1,6 @@
 package com.campbuddy.compose
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +44,10 @@ fun PreviewDark() {
                 .background(MaterialTheme.colorScheme.background)
         )
 
-        FrameBox(Modifier.fillMaxWidth(.7f).padding(10.dp), "Dane kontaktowe") {
+        FrameBox(
+            Modifier
+                .fillMaxWidth(.7f)
+                .padding(10.dp), "Dane kontaktowe") {
             Text(
                 text = "Nowak",
                 fontSize = 35.sp,
@@ -53,6 +58,9 @@ fun PreviewDark() {
     }
 }
 
+
+
+@SuppressLint("RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomDrawer(
@@ -70,11 +78,13 @@ fun BottomDrawer(
 
     val anchorsPx = anchors.map { it.toPx() }
 
-    state.updateAnchors(DraggableAnchors {
-        anchors.forEachIndexed { i, anchor ->
-            anchor at anchorsPx[i]
-        }
-    })
+    remember {
+        state.updateAnchors(DraggableAnchors {
+            anchors.forEachIndexed { i, anchor ->
+                anchor at anchorsPx[i]
+            }
+        })
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -95,7 +105,9 @@ fun BottomDrawer(
 fun FrameBox(modifier: Modifier, label: String, content: @Composable BoxScope.() -> Unit) {
     Column {
         Text(
-            modifier = Modifier.height(20.dp).padding(start = 3.dp),
+            modifier = Modifier
+                .height(20.dp)
+                .padding(start = 3.dp),
             text = label,
             fontSize = 10.sp,
             fontWeight = FontWeight.Normal,

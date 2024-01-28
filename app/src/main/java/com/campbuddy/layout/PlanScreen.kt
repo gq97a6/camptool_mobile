@@ -9,14 +9,27 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,9 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.campbuddy.classes.Event
+import com.campbuddy.api.Endpoints
+import com.campbuddy.api.Retrofit
+import com.campbuddy.classes.Day
+import com.campbuddy.classes.DayEvent
 import com.campbuddy.compose.Theme
-import com.campbuddy.`object`.Mockup.events
 
 @Composable
 @Preview
@@ -43,6 +58,7 @@ fun PlanPreview() {
     }
 }
 
+//TODO: IMPLEMENT
 @Composable
 fun PlanScreen(navController: NavController) = Column(
     Modifier
@@ -51,33 +67,83 @@ fun PlanScreen(navController: NavController) = Column(
         .fillMaxHeight(),
     verticalArrangement = Arrangement.Center
 ) {
+    var days by remember { mutableStateOf(listOf<Day>()) }
+    var index by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        val api = Retrofit.rf.create(Endpoints::class.java)
+        days = api.getAllDays().body()?.sortedBy { it.date } ?: listOf()
+    }
+
     Text(
         text = "Plan dnia",
         fontSize = 40.sp,
         fontWeight = FontWeight.ExtraBold,
         color = MaterialTheme.colorScheme.primary
     )
-    Text(
-        text = "20 stycznia - dzień 6/10",
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colorScheme.tertiary
-    )
 
-    Spacer(modifier = Modifier.height(30.dp))
+    if (days.isNotEmpty()) {
+        val dayIndex = days[index].date.dayOfMonth - 9
+        Text(
+            text = "${days[index].date.dayOfMonth} Lipiec - dzień $dayIndex/10",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Normal,
+            color = MaterialTheme.colorScheme.tertiary
+        )
 
-    events.forEach {
-        PlanRow(hour = it.key, it.value)
-        HorizontalDivider()
+        Spacer(modifier = Modifier.height(30.dp))
+
+        days[index].events.groupBy { it.time }.forEach {
+            val hour = it.key.hour.toString()
+            val minute = it.key.minute.toString().padStart(2, '0')
+            val time = "$hour:$minute"
+
+            PlanRow(time, it.value)
+            HorizontalDivider()
+        }
+    }
+
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(15.dp)) {
+        if (index != 0) OutlinedButton(
+            modifier = Modifier.align(Alignment.CenterStart),
+            onClick = {
+                index -= 1
+            }
+        ) {
+            Icon(
+                Icons.Filled.ChevronLeft,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(35.dp)
+            )
+        }
+
+        if (index != days.lastIndex) OutlinedButton(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            onClick = {
+                index += 1
+            }
+        ) {
+            Icon(
+                Icons.Filled.ChevronRight,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(35.dp)
+            )
+        }
     }
 }
 
 @Composable
-fun PlanRow(hour: String, events: List<Event>) {
+fun PlanRow(time: String, events: List<DayEvent>) {
+
     Row(Modifier.height(40.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(
             modifier = Modifier.width(65.dp),
-            text = hour,
+            text = time,
             textAlign = TextAlign.End,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -88,7 +154,7 @@ fun PlanRow(hour: String, events: List<Event>) {
 }
 
 @Composable
-fun PlanRowItem(event: Event) = Row(
+fun PlanRowItem(event: DayEvent) = Row(
     Modifier
         .fillMaxHeight()
         .defaultMinSize(minWidth = 100.dp),
@@ -97,13 +163,13 @@ fun PlanRowItem(event: Event) = Row(
     VerticalDivider(Modifier.padding(horizontal = 8.dp))
     Text(
         modifier = Modifier,
-        text = event.name,
+        text = event.des,
         fontSize = 15.sp,
         fontWeight = FontWeight.Normal,
         color = MaterialTheme.colorScheme.primary
     )
 
-    if (event.group != null) Text(
+    if (event.group.isNotBlank()) Text(
         modifier = Modifier.padding(start = 5.dp),
         text = event.group,
         fontSize = 15.sp,

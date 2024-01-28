@@ -10,6 +10,7 @@ import java.io.FileReader
 object Storage {
     val mapper: ObjectMapper = jacksonObjectMapper()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .findAndRegisterModules()
 
     //Serialize object to string
     fun Any.prepareSave(): String = mapper.writeValueAsString(this)
