@@ -1,4 +1,4 @@
-package com.campbuddy.`object`
+package com.camptool.`object`
 
 import java.util.Random
 

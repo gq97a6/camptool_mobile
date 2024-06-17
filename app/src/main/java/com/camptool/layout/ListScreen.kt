@@ -1,12 +1,11 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.campbuddy.layout
+package com.camptool.layout
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -53,18 +52,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.compose.rememberNavController
-import com.campbuddy.api.Endpoints
-import com.campbuddy.api.Retrofit
-import com.campbuddy.classes.Kid
-import com.campbuddy.compose.BottomDrawer
-import com.campbuddy.compose.Theme
-import com.campbuddy.createToast
-import com.campbuddy.`object`.G
-import com.campbuddy.performClick
-import com.campbuddy.toDp
-import com.campbuddy.toPx
+import com.camptool.api.Endpoints
+import com.camptool.api.Retrofit
+import com.camptool.classes.Kid
+import com.camptool.compose.BottomDrawer
+import com.camptool.compose.Theme
+import com.camptool.`object`.G
+import com.camptool.performClick
+import com.camptool.toDp
+import com.camptool.toPx
 
 @Composable
 @Preview

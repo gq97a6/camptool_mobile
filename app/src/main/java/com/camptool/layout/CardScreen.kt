@@ -1,4 +1,4 @@
-package com.campbuddy.layout
+package com.camptool.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,12 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.campbuddy.api.Endpoints
-import com.campbuddy.api.Retrofit
-import com.campbuddy.classes.Kid
-import com.campbuddy.compose.FrameBox
-import com.campbuddy.compose.Theme
-import com.campbuddy.`object`.G.kid
+import com.camptool.api.Endpoints
+import com.camptool.api.Retrofit
+import com.camptool.classes.Kid
+import com.camptool.compose.FrameBox
+import com.camptool.compose.Theme
+import com.camptool.`object`.G.kid
 import kotlinx.coroutines.launch
 
 @Composable

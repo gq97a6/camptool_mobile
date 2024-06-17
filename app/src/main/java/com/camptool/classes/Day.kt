@@ -1,9 +1,7 @@
-package com.campbuddy.classes
+package com.camptool.classes
 
 import java.time.LocalDate
 import java.time.LocalTime
-import java.util.*
-import kotlin.random.Random
 
 data class Day(
     var uuid: String = "",
