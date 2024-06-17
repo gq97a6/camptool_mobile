@@ -1,6 +1,6 @@
-package com.campbuddy.api
+package com.camptool.api
 
-import com.campbuddy.`object`.Storage.mapper
+import com.camptool.`object`.Storage.mapper
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit

@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CampBuddy"
+rootProject.name = "CampTool"
 include ':app'

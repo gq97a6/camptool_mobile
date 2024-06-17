@@ -1,6 +1,6 @@
-package com.campbuddy.`object`
+package com.camptool.`object`
 
-import com.campbuddy.classes.Kid
+import com.camptool.classes.Kid
 import kotlin.reflect.KClass
 
 object G {

@@ -1,4 +1,4 @@
-package com.campbuddy
+package com.camptool
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -37,12 +37,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.campbuddy.compose.Theme
-import com.campbuddy.layout.CardScreen
-import com.campbuddy.layout.HomeScreen
-import com.campbuddy.layout.ListScreen
-import com.campbuddy.layout.LoginScreen
-import com.campbuddy.layout.PlanScreen
+import com.camptool.compose.Theme
+import com.camptool.layout.CardScreen
+import com.camptool.layout.HomeScreen
+import com.camptool.layout.ListScreen
+import com.camptool.layout.LoginScreen
+import com.camptool.layout.PlanScreen
 import kotlinx.coroutines.launch
 
 

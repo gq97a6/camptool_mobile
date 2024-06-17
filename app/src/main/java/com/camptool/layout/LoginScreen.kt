@@ -1,4 +1,4 @@
-package com.campbuddy.layout
+package com.camptool.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.campbuddy.R
-import com.campbuddy.api.Endpoints
-import com.campbuddy.api.Retrofit
-import com.campbuddy.compose.Theme
-import com.campbuddy.createToast
+import com.camptool.R
+import com.camptool.api.Endpoints
+import com.camptool.api.Retrofit
+import com.camptool.compose.Theme
+import com.camptool.createToast
 import kotlinx.coroutines.launch
 
 @Composable
@@ -68,7 +68,7 @@ fun LoginScreen(navController: NavController) = Column(
         color = MaterialTheme.colorScheme.primary
     )
     Text(
-        text = "Buddy",
+        text = "Tool",
         fontSize = 65.sp,
         fontWeight = FontWeight.ExtraBold,
         color = MaterialTheme.colorScheme.tertiary

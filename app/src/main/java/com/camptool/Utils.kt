@@ -1,6 +1,6 @@
 @file:Suppress("UNUSED")
 
-package com.campbuddy
+package com.camptool
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
@@ -24,7 +24,6 @@ import android.widget.Toast
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.hsv
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -201,7 +200,7 @@ internal fun createNotificationChannel(context: Context) {
         "Other notification",
         NotificationManager.IMPORTANCE_DEFAULT
     ).apply {
-        description = "com/campbuddy/notification_channel"
+        description = "com/camptool/notification_channel"
     }
 
     val notificationManager =

@@ -1,6 +1,6 @@
-package com.campbuddy.`object`
+package com.camptool.`object`
 
-import com.campbuddy.`object`.G.path
+import com.camptool.`object`.G.path
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

@@ -1,7 +1,7 @@
-package com.campbuddy.api
+package com.camptool.api
 
-import com.campbuddy.classes.Day
-import com.campbuddy.classes.Kid
+import com.camptool.classes.Day
+import com.camptool.classes.Kid
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

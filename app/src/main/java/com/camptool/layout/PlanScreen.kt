@@ -1,4 +1,4 @@
-package com.campbuddy.layout
+package com.camptool.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,11 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.campbuddy.api.Endpoints
-import com.campbuddy.api.Retrofit
-import com.campbuddy.classes.Day
-import com.campbuddy.classes.DayEvent
-import com.campbuddy.compose.Theme
+import com.camptool.api.Endpoints
+import com.camptool.api.Retrofit
+import com.camptool.classes.Day
+import com.camptool.classes.DayEvent
+import com.camptool.compose.Theme
 
 @Composable
 @Preview
